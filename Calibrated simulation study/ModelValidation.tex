@@ -1,0 +1,75 @@
+\documentclass[tikz,border=3pt]{standalone}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{mathpazo}
+
+\tikzset{elegant/.style={domain=-2:2,thick,samples=201,magenta,line cap=rect,line join=bevel}}
+
+\begin{document}
+
+\tikzstyle{randomvariable} = [circle, minimum width=0.5cm, minimum height=0.5cm,text centered,draw=black, fill=red!30]
+\tikzstyle{sequencedata} = [ellipse, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=green!30]
+\tikzstyle{model1} = [rectangle, minimum width=0.2cm, minimum height=0.2cm,text centered, draw=black]
+\tikzstyle{model2} = [rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=purple!20]
+\tikzstyle{constant} = [rectangle, minimum width=1cm, minimum height=0.5cm,text centered]
+\tikzstyle{element} = [diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{arrow} = [thick]
+
+\begin{tikzpicture}
+\node (Data) [sequencedata] {D};
+\node (Model) [model2, above of=Data,yshift=1cm] {PhyloCTMC};
+\node (Qmatrix) [element, above of=Model,xshift=-2cm,yshift=1cm] {Q};
+\node (Stree) [element, above of=Model,xshift=5cm,yshift=1cm] {T};
+\node (HKYmodel) [model1,above of =Qmatrix]{HKY};
+\node (Clockmodel) [model1,above of =Stree]{UCRelaxedClockModel};
+\node (Freqence) [randomvariable,above of=HKYmodel,xshift=-1cm]{$\pi $};
+\node (Kappa) [randomvariable,above of=HKYmodel,xshift=1cm]{$\kappa $};
+\node (Freqprior) [model1,above of=Freqence]{Dirichlet};
+\node (Alfa) [constant,above of=Freqprior]{$\alpha = 1 $};
+\node (Kappaprior) [model1,above of=Kappa]{LogNormal};
+\node (Lower) [constant,above of=Kappaprior,xshift=-0.8cm]{$M4 = 5$};
+\node (Upper) [constant,above of=Kappaprior,xshift=0.8cm]{$S4 = 1.25$};
+\node (Rates) [randomvariable,above of=Clockmodel,xshift=-3cm]{${r_i}$};
+\node (Tree) [randomvariable,above of=Clockmodel,xshift=3cm]{$\Psi $};
+\node (LogNormal1) [model1,above of =Rates]{LogNormal};
+\node (YuleModel) [model1,above of =Tree]{YuleModel};
+\node (Mean) [constant,above of =LogNormal1,xshift=-0.6cm]{$M1 = 1$};
+\node (Stdev) [randomvariable,above of =LogNormal1,xshift=1cm]{$S1$};
+\node (LogNormal3) [model1,above of =Stdev]{LogNormal};
+\node (X) [constant,above of =LogNormal3,xshift=-1cm]{$M3 = 0.1$};
+\node (Y) [constant,above of =LogNormal3,,xshift=1cm]{$S3 = 0.1$};
+\node (N) [constant,above of =YuleModel,xshift=-1cm]{$n = 7$};
+\node (Birthrate) [randomvariable,above of =YuleModel,xshift=1cm]{$\lambda$};
+\node (LogNormal2) [model1,above of =Birthrate]{LogNormal};
+\node (M) [constant,above of =LogNormal2,xshift=-1cm]{$M2 = 1$};
+\node (S) [constant,above of =LogNormal2,xshift=1cm]{$S2 = 1$};
+
+\draw [arrow](Model) -- node[anchor=north,yshift=-1.5cm] {sequence alignment}(Data);
+\draw [arrow](Model) -- node[anchor=south,xshift=-0.8cm] {mutation rate matrix}(Qmatrix);
+\draw [arrow](Model) -- (Stree);
+\draw [arrow](Qmatrix) -- (HKYmodel);
+\draw [arrow](Stree) -- node[anchor=north,yshift=-1cm] {substitution tree}(Clockmodel);
+\draw [arrow](Rates) -- (Clockmodel);
+\draw [arrow](Freqence) -- (HKYmodel);
+\draw [arrow](Tree) -- (Clockmodel);
+\draw [arrow](Kappa) -- (HKYmodel);
+\draw [arrow](Tree) -- (YuleModel);
+\draw [arrow](Kappa) -- (Kappaprior);
+\draw [arrow](LogNormal1) -- node[anchor=west,yshift=-0.5cm,xshift=0.3cm] {$i \in branch(\Psi )$}(Rates);
+\draw [arrow](Freqence) -- (Freqprior);
+\draw [arrow](LogNormal1) -- (Mean);
+\draw [arrow](LogNormal1) -- (Stdev);
+\draw [arrow](Upper) -- (Kappaprior);
+\draw [arrow](Lower) -- (Kappaprior);
+\draw [arrow](Alfa) -- (Freqprior);
+\draw [arrow](LogNormal3) -- (Stdev);
+\draw [arrow](LogNormal3) -- (X);
+\draw [arrow](LogNormal3) -- (Y);
+\draw [arrow](N) -- (YuleModel);
+\draw [arrow](Birthrate) -- (YuleModel);
+\draw [arrow](Birthrate) -- (LogNormal2);
+\draw [arrow](M) -- (LogNormal2);
+\draw [arrow](S) -- (LogNormal2);
+
+
+\end{tikzpicture}
+\end{document}
